@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cf-test-deployment
+  namespace: carlos-catalan-spin
+spec:
+  selector:
+    matchLabels:
+      app: cf-test
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: cf-test
+    spec:
+      containers:
+      - name: cf-test
+        image: carloscatalanl/cf-test
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "100m"
+          limits:
+            memory: "64Mi"
+            cpu: "200m"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        ports:
+        - containerPort: 8080
